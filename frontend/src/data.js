@@ -9,7 +9,7 @@ const products = [
     category: 'Milk Series',
     price: 15000,
     countInStock: 10,
-    rating: 4.5,
+    rating: 3.5,
     numReviews: 12,
   },
   {

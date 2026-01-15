@@ -1,5 +1,6 @@
 import { Badge, Card, Col, Row } from 'react-bootstrap';
 import products from '../data';
+import Rating from '../components/Rating';
 
 const HomeScreen = () => {
   return (
@@ -19,7 +20,8 @@ const HomeScreen = () => {
               <Card.Body className="d-flex justify-content-between align-items-center">
                 <Card.Text as="strong">Rp{product.price}</Card.Text>
                 <Card.Text>
-                  {product.rating} {product.numReviews} reviews
+                  <Rating valueRating={product.rating} />
+                  {product.numReviews} reviews
                 </Card.Text>
               </Card.Body>
             </Card>
