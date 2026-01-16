@@ -1,4 +1,5 @@
 import { Navbar, Container, Nav } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { ShoppingCart, User } from 'react-feather';
 const Header = () => {
   return (
@@ -10,15 +11,17 @@ const Header = () => {
         data-bs-theme="dark"
       >
         <Container>
-          <Navbar.Brand href="/">Home</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/">
+            Home
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="nav-id" />
           <Navbar.Collapse id="nav-id">
             <Nav className="ms-auto">
-              <Nav.Link href="/cart">
+              <Nav.Link as={Link} to="/cart">
                 <ShoppingCart />
                 Cart
               </Nav.Link>
-              <Nav.Link href="/login">
+              <Nav.Link as={Link} to="/login">
                 <User />
                 Login
               </Nav.Link>
