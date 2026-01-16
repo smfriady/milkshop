@@ -1,6 +1,7 @@
 import { Badge, Card, Col, Row } from 'react-bootstrap';
 import products from '../data';
 import Rating from '../components/Rating';
+import { Link } from 'react-router-dom';
 
 const HomeScreen = () => {
   return (
@@ -12,7 +13,9 @@ const HomeScreen = () => {
               <Badge bg="primary" className="position-absolute m-1">
                 {product.category}
               </Badge>
-              <Card.Img src={product.image} alt={product.name} />
+              <Link to={`/product/${product._id}`}>
+                <Card.Img src={product.image} alt={product.name} />
+              </Link>
               <Card.Body>
                 <Card.Text>{product.name}</Card.Text>
                 <Card.Text>{product.description}</Card.Text>
