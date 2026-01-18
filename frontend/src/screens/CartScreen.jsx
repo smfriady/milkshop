@@ -73,18 +73,18 @@ const CartScreen = () => {
                       className="text-center"
                       value={qtyProduct}
                       onChange={(e) => {
-                        console.log(typeof e.target.value);
-                        if (e.target.value.length < 1) {
+                        let value = e.target.value.trim();
+                        if (value.length < 1) {
                           // 1. jika input value 0
                           setQtyProduct(0);
-                        } else if (isNaN(e.target.value)) {
+                        } else if (isNaN(value)) {
                           // 2. jika input bukan angka
                           setQtyProduct(0);
-                        } else if (e.target.value >= 15) {
+                        } else if (value >= 15) {
                           // 3. jika input value lebih besar dari stok
                           setQtyProduct(15);
                         } else {
-                          setQtyProduct(parseInt(e.target.value));
+                          setQtyProduct(parseInt(value));
                         }
                       }}
                     />
