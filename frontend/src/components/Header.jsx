@@ -1,6 +1,7 @@
-import { Navbar, Container, Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 import { ShoppingCart, User } from 'react-feather';
+import { Link } from 'react-router-dom';
+
 const Header = () => {
   return (
     <>
