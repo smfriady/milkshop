@@ -1,8 +1,12 @@
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { ShoppingCart, User } from 'react-feather';
 import { Link } from 'react-router-dom';
+import { useCart } from '../hooks/useCart';
 
 const Header = () => {
+  const { cart } = useCart();
+  console.log(cart);
+
   return (
     <>
       <Navbar
