@@ -1,13 +1,16 @@
-import { Link, useParams } from 'react-router-dom';
 import { Button, Card, Col, ListGroup, Row } from 'react-bootstrap';
+import { Link, useParams } from 'react-router-dom';
 import Rating from '../components/Rating';
+import { useCart } from '../hooks/useCart';
 
 import products from '../data';
+
 const ProductScreen = () => {
   const productId = useParams();
+  const { addToCart, existingProduct } = useCart();
 
   const resultProduct = products.find(
-    (product) => product._id === productId.id
+    (product) => product._id === productId.id,
   );
 
   return (
@@ -45,9 +48,28 @@ const ProductScreen = () => {
           <ListGroup variant="flush">
             <ListGroup.Item>Stock: {resultProduct.countInStock}</ListGroup.Item>
             <ListGroup.Item>
-              <Button variant="dark" className="w-100">
-                Add To Cart
-              </Button>
+              {existingProduct(resultProduct) ? (
+                <Button
+                  variant="primary"
+                  className="w-100"
+                  as={Link}
+                  to="/cart"
+                >
+                  See In Cart
+                </Button>
+              ) : resultProduct.countInStock === 0 ? (
+                <Button variant="dark" className="w-100" disabled>
+                  Out Of Stock
+                </Button>
+              ) : (
+                <Button
+                  variant="dark"
+                  className="w-100"
+                  onClick={() => addToCart(resultProduct)}
+                >
+                  Add To Cart
+                </Button>
+              )}
             </ListGroup.Item>
           </ListGroup>
         </Col>

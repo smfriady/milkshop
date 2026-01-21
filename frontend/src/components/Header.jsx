@@ -1,7 +1,11 @@
-import { Navbar, Container, Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Badge, Container, Nav, Navbar } from 'react-bootstrap';
 import { ShoppingCart, User } from 'react-feather';
+import { Link } from 'react-router-dom';
+import { useCart } from '../hooks/useCart';
+
 const Header = () => {
+  const { cart } = useCart();
+
   return (
     <>
       <Navbar
@@ -20,6 +24,7 @@ const Header = () => {
               <Nav.Link as={Link} to="/cart">
                 <ShoppingCart />
                 Cart
+                <Badge>{cart.length}</Badge>
               </Nav.Link>
               <Nav.Link as={Link} to="/login">
                 <User />
