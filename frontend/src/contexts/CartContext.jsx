@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { CartStorage } from '../helpers/storage';
 
 const CartContext = createContext();
@@ -74,6 +74,58 @@ const CartProvider = ({ children }) => {
     );
   };
 
+  // update input product quantity
+  const updateInputProductQty = (product, inputUser) => {
+    setCart((prevProduct) => {
+      return prevProduct.map((item) => {
+        if (product._id === item._id) {
+          if (inputUser === '') return { ...item, qty: '' };
+          let newQty = parseInt(inputUser);
+          if (isNaN(newQty)) return { ...item, qty: '' };
+
+          newQty = Math.min(item.countInStock, Math.max(1, newQty));
+          return { ...item, qty: newQty };
+        }
+        return item;
+      });
+    });
+  };
+
+  // validate on blur event
+  const validateOnBlur = (product) => {
+    setCart((prevProduct) => {
+      return prevProduct.map((item) => {
+        if (product._id === item._id) {
+          if (item.qty === '' || item.qty < 1) {
+            return { ...item, qty: 1 };
+          }
+        }
+        return item;
+      });
+    });
+  };
+
+  // cart summary
+  const cartSummary = useMemo(() => {
+    const subtotal = cart.reduce((acc, product) => {
+      const productQty = parseInt(product.qty) || 0;
+
+      acc[product._id] = product.price * productQty;
+
+      return acc;
+    }, {});
+    const total = cart.reduce((acc, product) => {
+      const productQty = parseInt(product.qty) || 0;
+
+      return acc + product.price * productQty;
+    }, 0);
+
+    return {
+      ...subtotal,
+      total: total,
+    };
+  }, [cart]);
+
   let value = {
     cart,
     addToCart,
@@ -81,6 +133,9 @@ const CartProvider = ({ children }) => {
     decrementQtyProduct,
     incrementQtyProduct,
     removeProductFromCart,
+    updateInputProductQty,
+    validateOnBlur,
+    cartSummary,
   };
 
   return <CartContext value={value}>{children}</CartContext>;
