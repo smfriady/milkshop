@@ -1,7 +1,7 @@
+import { useState } from 'react';
 import {
   Badge,
   Button,
-  ButtonGroup,
   Card,
   Col,
   Form,
@@ -11,7 +11,6 @@ import {
 } from 'react-bootstrap';
 import { Minus, Plus, Trash } from 'react-feather';
 import products from '../data';
-import { useState } from 'react';
 import { useCart } from '../hooks/useCart';
 
 const CartScreen = () => {
@@ -20,6 +19,9 @@ const CartScreen = () => {
     decrementQtyProduct,
     incrementQtyProduct,
     removeProductFromCart,
+    updateInputProductQty,
+    validateOnBlur,
+    cartSummary,
   } = useCart();
   const [qtyProduct, setQtyProduct] = useState(1);
 
@@ -37,7 +39,7 @@ const CartScreen = () => {
             {cart.length ? (
               <>
                 {cart.map((product, idx) => (
-                  <Row key={idx}>
+                  <Row key={idx} className="mb-1">
                     <Col lg="3">
                       <Card className="rounded-0">
                         <Card.Img
@@ -47,13 +49,16 @@ const CartScreen = () => {
                         />
                       </Card>
                     </Col>
-                    <Col lg="7">
+                    <Col lg="6">
                       <ListGroup variant="flush">
                         <ListGroup.Item
                           as="div"
-                          className="d-flex justify-content-between align-items-center"
+                          className="d-flex justify-content-between align-items-center px-0"
                         >
-                          <div>{product.name}</div>
+                          <div>
+                            <span className="fw-bold">{product.name}</span>
+                            <Badge className="mx-1">{product.category}</Badge>
+                          </div>
                           <div>
                             <Button
                               variant="danger"
@@ -64,69 +69,60 @@ const CartScreen = () => {
                             </Button>
                           </div>
                         </ListGroup.Item>
-                        <ListGroup.Item>
-                          <Badge>{product.category}</Badge>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
+                        <ListGroup.Item className="fw-bold px-0">
                           Stok: {product.countInStock}
                         </ListGroup.Item>
-                        <ListGroup.Item as="strong">
-                          Rp{product.price}
+                        <ListGroup.Item as="strong" className="px-0">
+                          Rp{product.price} x {product.qty} = Rp
+                          {cartSummary[product._id].toLocaleString('id-ID')}
                         </ListGroup.Item>
                       </ListGroup>
                     </Col>
-                    <Col
-                      lg="2"
-                      className="d-flex justify-content-center align-items-end"
-                    >
+                    <Col lg="3">
                       <Form>
-                        <InputGroup className="mb-3 rounded-0">
-                          <InputGroup.Text
-                            as={Button}
+                        <InputGroup className="rounded-0">
+                          <Button
+                            size="sm"
                             className="rounded-0"
                             disabled={product.qty <= 1}
                             onClick={() => decrementQtyProduct(product)}
                           >
                             <Minus size={16} />
-                          </InputGroup.Text>
+                          </Button>
                           <Form.Control
+                            size="sm"
                             type="text"
                             name="product_qty"
                             className="text-center"
                             value={product.qty}
-                            onChange={(e) => {
-                              let value = e.target.value.trim();
-                              if (value.length < 1) {
-                                // 1. jika input value 0
-                                setQtyProduct(0);
-                              } else if (isNaN(value)) {
-                                // 2. jika input bukan angka
-                                setQtyProduct(0);
-                              } else if (value >= 15) {
-                                // 3. jika input value lebih besar dari stok
-                                setQtyProduct(15);
-                              } else {
-                                setQtyProduct(parseInt(value));
-                              }
-                            }}
+                            onChange={(e) =>
+                              updateInputProductQty(product, e.target.value)
+                            }
+                            onBlur={() => validateOnBlur(product)}
                           />
-                          <InputGroup.Text
-                            as={Button}
+                          <Button
+                            size="sm"
                             className="rounded-0"
                             disabled={product.qty >= product.countInStock}
                             onClick={() => incrementQtyProduct(product)}
                           >
                             <Plus size={16} />
-                          </InputGroup.Text>
+                          </Button>
                         </InputGroup>
-                        <ButtonGroup className="w-100">
-                          <Button bg="danger" className="border-0" as={Badge}>
+                        <div>
+                          <Badge
+                            bg="danger"
+                            className="border-0 rounded-0 w-50"
+                          >
                             min: 1
-                          </Button>
-                          <Button bg="danger" className="border-0" as={Badge}>
-                            max: 15
-                          </Button>
-                        </ButtonGroup>
+                          </Badge>
+                          <Badge
+                            bg="danger"
+                            className="border-0 rounded-0 w-50"
+                          >
+                            max: {product.countInStock}
+                          </Badge>
+                        </div>
                       </Form>
                     </Col>
                   </Row>
@@ -151,9 +147,9 @@ const CartScreen = () => {
           <Card className="rounded-0">
             <Card.Body>
               <ListGroup variant="flush">
-                <ListGroup.Item>Summary Cart</ListGroup.Item>
-                <ListGroup.Item>
-                  Total: Rp{resultProduct.price * qtyProduct}
+                <ListGroup.Item className="fw-bold">Total Price</ListGroup.Item>
+                <ListGroup.Item className="fw-bold">
+                  Rp{cartSummary.total}
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Button
