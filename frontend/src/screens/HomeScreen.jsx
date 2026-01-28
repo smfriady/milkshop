@@ -1,13 +1,34 @@
 import { Badge, Card, Col, Row } from 'react-bootstrap';
-import products from '../data';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Rating from '../components/Rating';
 import { Link } from 'react-router-dom';
+import Loader from '../components/Loader';
+import ErrorMessage from '../components/ErrorMessage';
 
 const HomeScreen = () => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => {
+      const { data } = await axios.get('/api/products');
+      return data;
+    },
+    staleTime: 1000 * 60 * 2,
+    gcTime: 1000 * 60 * 10,
+  });
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <ErrorMessage />;
+  }
+
   return (
     <>
       <Row md="3" sm="2" xs="1">
-        {products.map((product, idx) => (
+        {data.map((product, idx) => (
           <Col key={idx}>
             <Card className="m-1 position-relative">
               <Badge bg="primary" className="position-absolute m-1">
